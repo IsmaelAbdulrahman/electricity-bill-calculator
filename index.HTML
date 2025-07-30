@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ronaki Electricity Bill Calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .section-group {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fdfdfd;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        .input-field {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #333;
+            background-color: #f9fafb;
+            transition: border-color 0.2s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            border: 1px solid #2563eb;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            border: 1px solid #4b5563;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        .btn-blue {
+            background-color: #DDF3FD;
+            color: #333;
+            border: 1px solid black;
+        }
+        .btn-blue:hover {
+            background-color: #CDEEFB;
+        }
+        .btn-blue:active {
+            background-color: #AFC8E7;
+        }
+        .btn-orange {
+            background-color: #FFF0D9;
+            color: #333;
+            border: 1px solid black;
+        }
+        .btn-orange:hover {
+            background-color: #FFE5C1;
+        }
+        .btn-orange:active {
+            background-color: #FFDDAA;
+        }
+        .btn-purple {
+            background-color: #F0E0F3;
+            color: #333;
+            border: 1px solid black;
+        }
+        .btn-purple:hover {
+            background-color: #EAD5ED;
+        }
+        .btn-purple:active {
+            background-color: #D8C3DB;
+        }
+        .result-label {
+            font-weight: 500;
+            color: #555;
+            padding: 8px 12px;
+            background-color: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+        }
+        .result-value {
+            font-weight: 600;
+            color: #dc2626; /* darkred */
+            padding: 8px 12px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+        }
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        .message-box-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none; /* Hidden by default */
+        }
+        .message-box-content {
+            margin-bottom: 20px;
+            font-size: 1rem;
+            color: #1A5276; /* Dark blue from Python code */
+        }
+        .message-box-button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+        .message-box-button:hover {
+            background-color: #2563eb;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Ronaki Electricity Bill Calculator</h1>
+
+        <!-- Welcome Message & About -->
+        <div id="welcome-message-box" class="message-box">
+            <div class="message-box-content">
+                <h3 class="font-semibold text-lg mb-2">Important Information</h3>
+                <!-- Updated welcome message content -->
+                <p>This application was created from Python code by Dr. Ismael Abdulrahman.</p>
+            </div>
+            <button id="welcome-message-ok-btn" class="message-box-button">Got It!</button>
+        </div>
+        <div id="message-box-overlay" class="message-box-overlay"></div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Column -->
+            <div class="flex flex-col space-y-6">
+                <!-- Manual Calculation Section -->
+                <div class="section-group">
+                    <h2 class="section-title">Manual Bill Calculation</h2>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                        <label for="category-dropdown" class="w-full sm:w-auto">Category:</label>
+                        <select id="category-dropdown" class="input-field flex-grow">
+                            <option>Household</option>
+                            <option>Commercial</option>
+                            <option>Agriculture</option>
+                            <option>Industrial</option>
+                            <option>Large Industry</option>
+                            <option>State</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                        <label for="consumption-type-dropdown" class="w-full sm:w-auto">Consumption:</label>
+                        <select id="consumption-type-dropdown" class="input-field flex-grow">
+                            <option>kWh</option>
+                            <option>Avg Amperes</option>
+                            <option>Given Bill</option>
+                        </select>
+                        <input type="number" id="consumption-input" class="input-field w-full sm:w-40" placeholder="Enter Consumption in kWh" value="1000">
+                    </div>
+                    <div class="flex justify-center gap-4">
+                        <button id="calculate-bill-btn" class="btn btn-purple">Calculate Bill</button>
+                    </div>
+                </div>
+
+                <!-- Meter Reading Section -->
+                <div class="section-group">
+                    <h2 class="section-title">Meter Reading Calculation</h2>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                        <label for="prev-reading-input" class="w-full sm:w-auto">Previous Reading:</label>
+                        <input type="number" id="prev-reading-input" class="input-field flex-grow" value="31051">
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                        <label for="curr-reading-input" class="w-full sm:w-auto">Current Reading:</label>
+                        <input type="number" id="curr-reading-input" class="input-field flex-grow" value="31910">
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                        <label for="days-input" class="w-full sm:w-auto">Days:</label>
+                        <input type="number" id="days-input" class="input-field flex-grow" value="30" min="1" max="365">
+                    </div>
+                    <div class="flex justify-center gap-4">
+                        <button id="calculate-meter-btn" class="btn btn-blue">Calculate Bill by Meter</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Results -->
+            <div class="flex flex-col space-y-6">
+                <!-- Total Summary Section -->
+                <div class="section-group">
+                    <h2 class="section-title">Calculation Summary</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex flex-col">
+                            <span class="result-label">Total Consumption:</span>
+                            <span id="total-kwh-value" class="result-value">0.00 kWh</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="result-label">Average Amperes:</span>
+                            <span id="avg-amperes-value" class="result-value">0.00 A</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="result-label">Total Bill:</span>
+                            <span id="total-bill-value" class="result-value">0 IQD</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="result-label">Average Rate:</span>
+                            <span id="avg-rate-value" class="result-value">0.00 IQD/kWh</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Removed Share/Load Section -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Removed all Firebase imports and related code as it's not needed for local execution
+        // and was causing issues when run directly from a file.
+
+        // --- Utility Functions ---
+
+        /**
+         * Displays a custom message box.
+         * @param {string} type - 'info', 'warning', 'error', 'success'
+         * @param {string} title - Title of the message box.
+         * @param {string} message - Content of the message.
+         */
+        function showMessageBox(type, title, message) {
+            const msgBox = document.getElementById('welcome-message-box');
+            const msgBoxContent = msgBox.querySelector('.message-box-content');
+            const msgBoxOverlay = document.getElementById('message-box-overlay');
+
+            // Set the message content
+            msgBoxContent.innerHTML = `<h3 class="font-semibold text-lg mb-2">${title}</h3><p>${message}</p>`;
+            msgBox.style.display = 'block';
+            msgBoxOverlay.style.display = 'block';
+
+            // Set specific styles based on type (optional, but good for feedback)
+            let textColor = '#1A5276'; // Default dark blue
+            if (type === 'error') textColor = '#dc2626'; // Red
+            if (type === 'warning') textColor = '#f59e0b'; // Amber
+            if (type === 'success') textColor = '#10b981'; // Green
+            msgBoxContent.style.color = textColor;
+        }
+
+        /**
+         * Hides the custom message box.
+         * @param {string} id - The ID of the message box to hide.
+         */
+        function hideMessageBox(id = 'welcome-message-box') {
+            document.getElementById(id).style.display = 'none';
+            document.getElementById('message-box-overlay').style.display = 'none';
+        }
+
+        /**
+         * Formats a number with comma separators for thousands.
+         * @param {number} value - The number to format.
+         * @param {number} decimalPlaces - Number of decimal places.
+         * @param {boolean} isCurrency - If true, formats as integer with no decimal places.
+         * @param {boolean} removeTrailingZeroDecimal - If true and value is an integer, formats without decimal.
+         * @returns {string} Formatted number string.
+         */
+        function formatNumber(value, decimalPlaces = 2, isCurrency = false, removeTrailingZeroDecimal = false) {
+            if (typeof value !== 'number' || isNaN(value)) {
+                return String(value);
+            }
+            if (isCurrency) {
+                return Math.round(value).toLocaleString('en-US');
+            }
+            if (removeTrailingZeroDecimal && value === Math.floor(value)) {
+                return Math.round(value).toLocaleString('en-US');
+            }
+            return value.toLocaleString('en-US', { minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces });
+        }
+
+        const VOLTAGE = 220;
+        const HOURS_PER_DAY = 24;
+
+        /**
+         * Converts kWh consumption to average Amperes.
+         * Formula: Amperes = (kWh * 1000) / (Voltage * Hours_per_Period)
+         * @param {number} kwhConsumption - Consumption in kWh.
+         * @param {number} daysPerPeriod - Number of days in the period.
+         * @returns {number} Average Amperes.
+         */
+        function kwhToAmperes(kwhConsumption, daysPerPeriod) {
+            if (VOLTAGE === 0 || daysPerPeriod === 0) {
+                return 0.0;
+            }
+            const hoursTotal = HOURS_PER_DAY * daysPerPeriod;
+            return (kwhConsumption * 1000) / (VOLTAGE * hoursTotal);
+        }
+
+        /**
+         * Converts average Amperes to kWh consumption.
+         * Formula: kWh = (Amperes * Voltage * Hours_per_Period) / 1000
+         * @param {number} amperes - Average Amperes.
+         * @param {number} daysPerPeriod - Number of days in the period.
+         * @returns {number} kWh consumption.
+         */
+        function amperesToKwh(amperes, daysPerPeriod) {
+            if (VOLTAGE === 0 || daysPerPeriod === 0) {
+                return 0.0;
+            }
+            const hoursTotal = HOURS_PER_DAY * daysPerPeriod;
+            return (amperes * VOLTAGE * hoursTotal) / 1000;
+        }
+
+        /**
+         * Calculates the cost for Kurdistan Ronaki Household tiered tariff.
+         * @param {number} kWh - Consumption in kWh.
+         * @returns {number} Total cost in IQD.
+         */
+        function getRonakiHouseholdTariffCost(kWh) {
+            const tiers = [400, 800, 1200, 1600];
+            const rates = [72, 108, 175, 265, 350]; // IQD/kWh
+
+            let totalCost = 0;
+            let remainingKwh = kWh;
+            let previousSlabLimit = 0;
+
+            for (let i = 0; i < rates.length; i++) {
+                const slabRate = rates[i];
+                const slabLimit = (i < tiers.length) ? tiers[i] : Infinity;
+
+                let consumptionInThisSlab = 0;
+
+                if (remainingKwh > 0) {
+                    if (i === 0) {
+                        consumptionInThisSlab = Math.min(remainingKwh, slabLimit);
+                    } else if (i < tiers.length) {
+                        consumptionInThisSlab = Math.min(remainingKwh, slabLimit - previousSlabLimit);
+                    } else {
+                        consumptionInThisSlab = remainingKwh;
+                    }
+
+                    totalCost += consumptionInThisSlab * slabRate;
+                    remainingKwh -= consumptionInThisSlab;
+                }
+                previousSlabLimit = slabLimit;
+            }
+            return totalCost;
+        }
+
+        /**
+         * Calculates cost for Kurdistan Ronaki Commercial (flat rate).
+         * @param {number} kWh - Consumption in kWh.
+         * @returns {number} Total cost in IQD.
+         */
+        function getRonakiCommercialTariffCost(kWh) {
+            const rate = 185;
+            return kWh * rate;
+        }
+
+        /**
+         * Calculates cost for Kurdistan Ronaki Agriculture (flat rate).
+         * @param {number} kWh - Consumption in kWh.
+         * @returns {number} Total cost in IQD.
+         */
+        function getRonakiAgricultureTariffCost(kWh) {
+            const rate = 60;
+            return kWh * rate;
+        }
+
+        /**
+         * Calculates cost for Kurdistan Ronaki Industrial (flat rate).
+         * @param {number} kWh - Consumption in kWh.
+         * @returns {number} Total cost in IQD.
+         */
+        function getRonakiIndustrialTariffCost(kWh) {
+            const rate = 160;
+            return kWh * rate;
+        }
+
+        /**
+         * Calculates cost for Kurdistan Ronaki Large Industry (flat rate).
+         * @param {number} kWh - Consumption in kWh.
+         * @returns {number} Total cost in IQD.
+         */
+        function getRonakiLargeIndustryTariffCost(kWh) {
+            const rate = 125;
+            return kWh * rate;
+        }
+
+        /**
+         * Calculates cost for Kurdistan Ronaki State (flat rate).
+         * @param {number} kWh - Consumption in kWh.
+         * @returns {number} Total cost in IQD.
+         */
+        function getRonakiStateTariffCost(kWh) {
+            const rate = 160;
+            return kWh * rate;
+        }
+
+        /**
+         * Calculates cost for different categories based on Kurdistan Ronaki tariffs.
+         * @param {number} consumption - Consumption in kWh.
+         * @param {string} category - Tariff category.
+         * @returns {number} Total cost in IQD.
+         */
+        function calculateCostForCategory(consumption, category) {
+            if (consumption < 0) return 0; // Ensure non-negative consumption
+
+            switch (category) {
+                case 'Household':
+                    return getRonakiHouseholdTariffCost(consumption);
+                case 'Commercial':
+                    return getRonakiCommercialTariffCost(consumption);
+                case 'Agriculture':
+                    return getRonakiAgricultureTariffCost(consumption);
+                case 'Industrial':
+                    return getRonakiIndustrialTariffCost(consumption);
+                case 'Large Industry':
+                    return getRonakiLargeIndustryTariffCost(consumption);
+                case 'State':
+                    return getRonakiStateTariffCost(consumption);
+                default:
+                    console.error(`Unknown category for cost calculation: ${category}`);
+                    return NaN;
+            }
+        }
+
+        // --- UI Elements ---
+        const categoryDropdown = document.getElementById('category-dropdown');
+        const consumptionTypeDropdown = document.getElementById('consumption-type-dropdown');
+        const consumptionInput = document.getElementById('consumption-input');
+        const calculateBillBtn = document.getElementById('calculate-bill-btn');
+
+        const prevReadingInput = document.getElementById('prev-reading-input');
+        const currReadingInput = document.getElementById('curr-reading-input');
+        const daysInput = document.getElementById('days-input');
+        const calculateMeterBtn = document.getElementById('calculate-meter-btn');
+
+        const totalKwhValue = document.getElementById('total-kwh-value');
+        const avgAmperesValue = document.getElementById('avg-amperes-value');
+        const totalBillValue = document.getElementById('total-bill-value');
+        const avgRateValue = document.getElementById('avg-rate-value');
+
+        // Message box elements
+        const welcomeMessageBox = document.getElementById('welcome-message-box');
+        const welcomeMessageOkBtn = document.getElementById('welcome-message-ok-btn');
+        const messageBoxOverlay = document.getElementById('message-box-overlay');
+
+
+        // --- State Variables ---
+        let lastCalculatedKwh = 0;
+        let lastCalculatedBill = 0;
+        let lastCalculatedAmperes = 0;
+        let lastCalculatedAvgRate = 0;
+        let lastCalculatedCategory = 'Household';
+
+        // --- Event Handlers ---
+
+        /**
+         * Updates the result display labels.
+         * @param {number} kwh - Total consumption in kWh.
+         * @param {number} bill - Total bill in IQD.
+         * @param {number} avgRate - Average rate in IQD/kWh.
+         * @param {number} avgAmperes - Average amperes.
+         */
+        function updateResultsDisplay(kwh, bill, avgRate, avgAmperes) {
+            totalKwhValue.innerHTML = `<span class="font-bold">${formatNumber(kwh, 2)}</span> kWh`;
+            totalBillValue.innerHTML = `<span class="font-bold">${formatNumber(bill, 0, true)}</span> IQD`;
+            avgRateValue.innerHTML = `<span class="font-bold">${formatNumber(avgRate, 2)}</span> IQD/kWh`;
+            avgAmperesValue.innerHTML = `<span class="font-bold">${formatNumber(avgAmperes, 2)}</span> A`;
+        }
+
+        /**
+         * Handles changes in the consumption type dropdown.
+         */
+        function onConsumptionTypeChanged() {
+            const selectedType = consumptionTypeDropdown.value;
+            if (selectedType === 'kWh') {
+                consumptionInput.placeholder = 'Enter Consumption in kWh';
+                consumptionInput.value = '1000';
+            } else if (selectedType === 'Avg Amperes') {
+                consumptionInput.placeholder = 'Enter Average Amperes';
+                consumptionInput.value = '12';
+            } else if (selectedType === 'Given Bill') {
+                consumptionInput.placeholder = 'Enter Given Bill in IQD';
+                consumptionInput.value = '100000';
+            }
+        }
+
+        /**
+         * Calculates bill based on manual input (kWh, Amperes, or Given Bill).
+         */
+        function calculateBillPushed() {
+            try {
+                const inputValue = parseFloat(consumptionInput.value.replace(/,/g, ''));
+                if (isNaN(inputValue) || inputValue < 0) {
+                    showMessageBox('warning', 'Input Error', 'Please enter a valid, non-negative numeric value for consumption.');
+                    updateResultsDisplay(0, 0, 0, 0);
+                    return;
+                }
+
+                const selectedCategory = categoryDropdown.value;
+                const selectedInputType = consumptionTypeDropdown.value;
+                const daysForCalculation = parseFloat(daysInput.value) || 30;
+
+                let calculatedKwh = 0;
+                let calculatedAmperes = 0;
+                let totalBill = 0;
+
+                if (selectedInputType === 'kWh') {
+                    calculatedKwh = inputValue;
+                    calculatedAmperes = kwhToAmperes(calculatedKwh, daysForCalculation);
+                    totalBill = calculateCostForCategory(calculatedKwh, selectedCategory);
+                } else if (selectedInputType === 'Avg Amperes') {
+                    calculatedAmperes = inputValue;
+                    calculatedKwh = amperesToKwh(calculatedAmperes, daysForCalculation);
+                    totalBill = calculateCostForCategory(calculatedKwh, selectedCategory);
+                } else if (selectedInputType === 'Given Bill') {
+                    const targetBill = inputValue;
+                    let lowKwh = 0.0;
+                    let highKwh = 50000.0; // Max reasonable kWh for search
+                    let foundKwh = 0.0;
+                    const tolerance = 1.0; // IQD
+
+                    for (let i = 0; i < 100; i++) { // Binary search iterations
+                        const midKwh = (lowKwh + highKwh) / 2;
+                        const calculatedBillAtMid = calculateCostForCategory(midKwh, selectedCategory);
+
+                        if (Math.abs(calculatedBillAtMid - targetBill) < tolerance) {
+                            foundKwh = midKwh;
+                            break;
+                        } else if (calculatedBillAtMid < targetBill) {
+                            lowKwh = midKwh;
+                        } else {
+                            highKwh = midKwh;
+                        }
+                    }
+                    calculatedKwh = foundKwh;
+                    calculatedAmperes = kwhToAmperes(calculatedKwh, daysForCalculation);
+                    totalBill = calculateCostForCategory(calculatedKwh, selectedCategory); // Recalculate with foundKwh for accuracy
+                }
+
+                if (isNaN(totalBill)) {
+                    showMessageBox('error', 'Calculation Error', 'Could not calculate bill for the selected category.');
+                    updateResultsDisplay(0, 0, 0, 0);
+                    return;
+                }
+
+                const avgRate = calculatedKwh > 0 ? totalBill / calculatedKwh : 0;
+
+                lastCalculatedKwh = calculatedKwh;
+                lastCalculatedBill = totalBill;
+                lastCalculatedAmperes = calculatedAmperes;
+                lastCalculatedAvgRate = avgRate;
+                lastCalculatedCategory = selectedCategory;
+
+                updateResultsDisplay(calculatedKwh, totalBill, avgRate, calculatedAmperes);
+
+            } catch (e) {
+                console.error("Error in calculateBillPushed:", e);
+                showMessageBox('error', 'Calculation Error', `An unexpected error occurred: ${e.message}`);
+                updateResultsDisplay(0, 0, 0, 0);
+            }
+        }
+
+        /**
+         * Calculates bill based on meter readings.
+         */
+        function calculateByMeterPushed() {
+            try {
+                const prevReading = parseFloat(prevReadingInput.value.replace(/,/g, ''));
+                const currReading = parseFloat(currReadingInput.value.replace(/,/g, ''));
+                const days = parseInt(daysInput.value);
+
+                if (isNaN(prevReading) || isNaN(currReading) || prevReading < 0 || currReading < 0) {
+                    showMessageBox('warning', 'Input Error', 'Please enter valid, non-negative numeric values for meter readings.');
+                    updateResultsDisplay(0, 0, 0, 0);
+                    return;
+                }
+                if (currReading < prevReading) {
+                    showMessageBox('warning', 'Input Error', 'Current reading cannot be less than previous reading.');
+                    updateResultsDisplay(0, 0, 0, 0);
+                    return;
+                }
+                if (isNaN(days) || days <= 0 || days > 365) {
+                    showMessageBox('warning', 'Input Error', 'Please enter a positive integer for days (1-365).');
+                    updateResultsDisplay(0, 0, 0, 0);
+                    return;
+                }
+
+                const consumption = currReading - prevReading;
+                const selectedCategory = categoryDropdown.value;
+                const totalBill = calculateCostForCategory(consumption, selectedCategory);
+
+                if (isNaN(totalBill)) {
+                    showMessageBox('error', 'Calculation Error', 'Could not calculate bill for the selected category.');
+                    updateResultsDisplay(0, 0, 0, 0);
+                    return;
+                }
+
+                const avgAmperes = kwhToAmperes(consumption, days);
+                const avgRate = consumption > 0 ? totalBill / consumption : 0;
+
+                lastCalculatedKwh = consumption;
+                lastCalculatedBill = totalBill;
+                lastCalculatedAmperes = avgAmperes;
+                lastCalculatedAvgRate = avgRate;
+                lastCalculatedCategory = selectedCategory;
+
+                updateResultsDisplay(consumption, totalBill, avgRate, avgAmperes);
+
+            } catch (e) {
+                console.error("Error in calculateByMeterPushed:", e);
+                showMessageBox('error', 'Calculation Error', `An unexpected error occurred: ${e.message}`);
+                updateResultsDisplay(0, 0, 0, 0);
+            }
+        }
+
+        // --- Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Display welcome message on initial load
+            showMessageBox('info', 'Important Information',
+                "This application was created from Python code by Dr. Ismael Abdulrahman." // Updated welcome message
+            );
+
+            // Set initial values and trigger calculations
+            onConsumptionTypeChanged(); // Set initial placeholder/value for consumption input
+            calculateBillPushed(); // Perform an initial calculation based on defaults
+
+            // Add Event Listeners
+            consumptionTypeDropdown.addEventListener('change', onConsumptionTypeChanged);
+            categoryDropdown.addEventListener('change', calculateBillPushed); // Recalculate if category changes
+            daysInput.addEventListener('change', () => {
+                // Recalculate based on manual input if days change, to update amperes
+                calculateBillPushed();
+                // Also recalculate meter if days change
+                calculateByMeterPushed();
+            });
+
+            calculateBillBtn.addEventListener('click', calculateBillPushed);
+            calculateMeterBtn.addEventListener('click', calculateByMeterPushed);
+
+            // Attach event listeners for the message box buttons
+            welcomeMessageOkBtn.addEventListener('click', () => hideMessageBox('welcome-message-box'));
+            messageBoxOverlay.addEventListener('click', () => hideMessageBox());
+        });
+    </script>
+</body>
+</html>
