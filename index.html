@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ronaki Electricity Bill Calculator</title>
+    <title>Runaki Electricity Bill Calculator</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font -->
@@ -128,78 +128,77 @@
             border: 1px solid #e0e0e0;
             border-radius: 6px;
         }
-        .message-box {
+        /* Custom Modal Styles */
+        .custom-modal {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: #fff;
-            padding: 25px;
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            z-index: 1001;
             display: none; /* Hidden by default */
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
-            border: 1px solid #ccc;
+            border: 1px solid #bbb;
+            animation: fadeIn 0.3s ease-out;
         }
-        .message-box-overlay {
+        .custom-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
             display: none; /* Hidden by default */
         }
-        .message-box-content {
-            margin-bottom: 20px;
-            font-size: 1rem;
-            color: #1A5276; /* Dark blue from Python code */
+        .custom-modal-content {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.6;
         }
-        .message-box-button {
+        .custom-modal-button {
             background-color: #3b82f6;
             color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 10px 20px;
+            border-radius: 6px;
             cursor: pointer;
             border: none;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s;
         }
-        .message-box-button:hover {
+        .custom-modal-button:hover {
             background-color: #2563eb;
+            transform: translateY(-1px);
         }
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-left: 10px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
         }
     </style>
 </head>
 <body class="p-4">
     <div class="container">
-        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Ronaki Electricity Bill Calculator</h1>
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Runaki Electricity Bill Calculator</h1>
 
-        <!-- Welcome Message & About -->
-        <div id="welcome-message-box" class="message-box">
-            <div class="message-box-content">
-                <h3 class="font-semibold text-lg mb-2">Important Information</h3>
-                <!-- Updated welcome message content -->
-                <p>This application was created from Python code by Dr. Ismael Abdulrahman.</p>
-            </div>
-            <button id="welcome-message-ok-btn" class="message-box-button">Got It!</button>
+        <!-- About Button -->
+        <div class="text-center mb-6">
+            <button id="about-button" class="btn btn-secondary">About</button>
         </div>
-        <div id="message-box-overlay" class="message-box-overlay"></div>
+
+        <!-- Custom About Modal -->
+        <div id="about-modal" class="custom-modal">
+            <div class="custom-modal-content">
+                <h3 class="font-semibold text-xl mb-3">About This Application</h3>
+                <p>This application was created from Python code by Dr. Ismael Abdulrahman, 2025.</p>
+            </div>
+            <button id="about-modal-close-btn" class="custom-modal-button">Close</button>
+        </div>
+        <div id="about-modal-overlay" class="custom-modal-overlay"></div>
 
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -278,49 +277,29 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Removed Share/Load Section -->
             </div>
         </div>
     </div>
 
     <script type="module">
-        // Removed all Firebase imports and related code as it's not needed for local execution
-        // and was causing issues when run directly from a file.
-
         // --- Utility Functions ---
 
         /**
-         * Displays a custom message box.
-         * @param {string} type - 'info', 'warning', 'error', 'success'
-         * @param {string} title - Title of the message box.
-         * @param {string} message - Content of the message.
+         * Displays a custom modal.
+         * @param {string} modalId - The ID of the modal to display.
          */
-        function showMessageBox(type, title, message) {
-            const msgBox = document.getElementById('welcome-message-box');
-            const msgBoxContent = msgBox.querySelector('.message-box-content');
-            const msgBoxOverlay = document.getElementById('message-box-overlay');
-
-            // Set the message content
-            msgBoxContent.innerHTML = `<h3 class="font-semibold text-lg mb-2">${title}</h3><p>${message}</p>`;
-            msgBox.style.display = 'block';
-            msgBoxOverlay.style.display = 'block';
-
-            // Set specific styles based on type (optional, but good for feedback)
-            let textColor = '#1A5276'; // Default dark blue
-            if (type === 'error') textColor = '#dc2626'; // Red
-            if (type === 'warning') textColor = '#f59e0b'; // Amber
-            if (type === 'success') textColor = '#10b981'; // Green
-            msgBoxContent.style.color = textColor;
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.getElementById(modalId + '-overlay').style.display = 'block';
         }
 
         /**
-         * Hides the custom message box.
-         * @param {string} id - The ID of the message box to hide.
+         * Hides a custom modal.
+         * @param {string} modalId - The ID of the modal to hide.
          */
-        function hideMessageBox(id = 'welcome-message-box') {
-            document.getElementById(id).style.display = 'none';
-            document.getElementById('message-box-overlay').style.display = 'none';
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById(modalId + '-overlay').style.display = 'none';
         }
 
         /**
@@ -378,11 +357,11 @@
         }
 
         /**
-         * Calculates the cost for Kurdistan Ronaki Household tiered tariff.
+         * Calculates the cost for Kurdistan Runaki Household tiered tariff.
          * @param {number} kWh - Consumption in kWh.
          * @returns {number} Total cost in IQD.
          */
-        function getRonakiHouseholdTariffCost(kWh) {
+        function getRunakiHouseholdTariffCost(kWh) {
             const tiers = [400, 800, 1200, 1600];
             const rates = [72, 108, 175, 265, 350]; // IQD/kWh
 
@@ -414,57 +393,57 @@
         }
 
         /**
-         * Calculates cost for Kurdistan Ronaki Commercial (flat rate).
+         * Calculates cost for Kurdistan Runaki Commercial (flat rate).
          * @param {number} kWh - Consumption in kWh.
          * @returns {number} Total cost in IQD.
          */
-        function getRonakiCommercialTariffCost(kWh) {
+        function getRunakiCommercialTariffCost(kWh) {
             const rate = 185;
             return kWh * rate;
         }
 
         /**
-         * Calculates cost for Kurdistan Ronaki Agriculture (flat rate).
+         * Calculates cost for Kurdistan Runaki Agriculture (flat rate).
          * @param {number} kWh - Consumption in kWh.
          * @returns {number} Total cost in IQD.
          */
-        function getRonakiAgricultureTariffCost(kWh) {
+        function getRunakiAgricultureTariffCost(kWh) {
             const rate = 60;
             return kWh * rate;
         }
 
         /**
-         * Calculates cost for Kurdistan Ronaki Industrial (flat rate).
+         * Calculates cost for Kurdistan Runaki Industrial (flat rate).
          * @param {number} kWh - Consumption in kWh.
          * @returns {number} Total cost in IQD.
          */
-        function getRonakiIndustrialTariffCost(kWh) {
+        function getRunakiIndustrialTariffCost(kWh) {
             const rate = 160;
             return kWh * rate;
         }
 
         /**
-         * Calculates cost for Kurdistan Ronaki Large Industry (flat rate).
+         * Calculates cost for Kurdistan Runaki Large Industry (flat rate).
          * @param {number} kWh - Consumption in kWh.
          * @returns {number} Total cost in IQD.
          */
-        function getRonakiLargeIndustryTariffCost(kWh) {
+        function getRunakiLargeIndustryTariffCost(kWh) {
             const rate = 125;
             return kWh * rate;
         }
 
         /**
-         * Calculates cost for Kurdistan Ronaki State (flat rate).
+         * Calculates cost for Kurdistan Runaki State (flat rate).
          * @param {number} kWh - Consumption in kWh.
          * @returns {number} Total cost in IQD.
          */
-        function getRonakiStateTariffCost(kWh) {
+        function getRunakiStateTariffCost(kWh) {
             const rate = 160;
             return kWh * rate;
         }
 
         /**
-         * Calculates cost for different categories based on Kurdistan Ronaki tariffs.
+         * Calculates cost for different categories based on Kurdistan Runaki tariffs.
          * @param {number} consumption - Consumption in kWh.
          * @param {string} category - Tariff category.
          * @returns {number} Total cost in IQD.
@@ -474,17 +453,17 @@
 
             switch (category) {
                 case 'Household':
-                    return getRonakiHouseholdTariffCost(consumption);
+                    return getRunakiHouseholdTariffCost(consumption);
                 case 'Commercial':
-                    return getRonakiCommercialTariffCost(consumption);
+                    return getRunakiCommercialTariffCost(consumption);
                 case 'Agriculture':
-                    return getRonakiAgricultureTariffCost(consumption);
+                    return getRunakiAgricultureTariffCost(consumption);
                 case 'Industrial':
-                    return getRonakiIndustrialTariffCost(consumption);
+                    return getRunakiIndustrialTariffCost(consumption);
                 case 'Large Industry':
-                    return getRonakiLargeIndustryTariffCost(consumption);
+                    return getRunakiLargeIndustryTariffCost(consumption);
                 case 'State':
-                    return getRonakiStateTariffCost(consumption);
+                    return getRunakiStateTariffCost(consumption);
                 default:
                     console.error(`Unknown category for cost calculation: ${category}`);
                     return NaN;
@@ -507,10 +486,11 @@
         const totalBillValue = document.getElementById('total-bill-value');
         const avgRateValue = document.getElementById('avg-rate-value');
 
-        // Message box elements
-        const welcomeMessageBox = document.getElementById('welcome-message-box');
-        const welcomeMessageOkBtn = document.getElementById('welcome-message-ok-btn');
-        const messageBoxOverlay = document.getElementById('message-box-overlay');
+        // About modal elements
+        const aboutButton = document.getElementById('about-button');
+        const aboutModal = document.getElementById('about-modal');
+        const aboutModalCloseBtn = document.getElementById('about-modal-close-btn');
+        const aboutModalOverlay = document.getElementById('about-modal-overlay');
 
 
         // --- State Variables ---
@@ -560,7 +540,12 @@
             try {
                 const inputValue = parseFloat(consumptionInput.value.replace(/,/g, ''));
                 if (isNaN(inputValue) || inputValue < 0) {
-                    showMessageBox('warning', 'Input Error', 'Please enter a valid, non-negative numeric value for consumption.');
+                    // Using the new showModal for messages
+                    showModal('about-modal'); // Reusing the modal for error messages
+                    document.getElementById('about-modal').querySelector('.custom-modal-content').innerHTML = `
+                        <h3 class="font-semibold text-xl mb-3" style="color: #dc2626;">Input Error</h3>
+                        <p>Please enter a valid, non-negative numeric value for consumption.</p>
+                    `;
                     updateResultsDisplay(0, 0, 0, 0);
                     return;
                 }
@@ -607,7 +592,11 @@
                 }
 
                 if (isNaN(totalBill)) {
-                    showMessageBox('error', 'Calculation Error', 'Could not calculate bill for the selected category.');
+                    showModal('about-modal');
+                    document.getElementById('about-modal').querySelector('.custom-modal-content').innerHTML = `
+                        <h3 class="font-semibold text-xl mb-3" style="color: #dc2626;">Calculation Error</h3>
+                        <p>Could not calculate bill for the selected category.</p>
+                    `;
                     updateResultsDisplay(0, 0, 0, 0);
                     return;
                 }
@@ -624,7 +613,11 @@
 
             } catch (e) {
                 console.error("Error in calculateBillPushed:", e);
-                showMessageBox('error', 'Calculation Error', `An unexpected error occurred: ${e.message}`);
+                showModal('about-modal');
+                document.getElementById('about-modal').querySelector('.custom-modal-content').innerHTML = `
+                    <h3 class="font-semibold text-xl mb-3" style="color: #dc2626;">Calculation Error</h3>
+                    <p>An unexpected error occurred: ${e.message}</p>
+                `;
                 updateResultsDisplay(0, 0, 0, 0);
             }
         }
@@ -639,17 +632,29 @@
                 const days = parseInt(daysInput.value);
 
                 if (isNaN(prevReading) || isNaN(currReading) || prevReading < 0 || currReading < 0) {
-                    showMessageBox('warning', 'Input Error', 'Please enter valid, non-negative numeric values for meter readings.');
+                    showModal('about-modal');
+                    document.getElementById('about-modal').querySelector('.custom-modal-content').innerHTML = `
+                        <h3 class="font-semibold text-xl mb-3" style="color: #dc2626;">Input Error</h3>
+                        <p>Please enter valid, non-negative numeric values for meter readings.</p>
+                    `;
                     updateResultsDisplay(0, 0, 0, 0);
                     return;
                 }
                 if (currReading < prevReading) {
-                    showMessageBox('warning', 'Input Error', 'Current reading cannot be less than previous reading.');
+                    showModal('about-modal');
+                    document.getElementById('about-modal').querySelector('.custom-modal-content').innerHTML = `
+                        <h3 class="font-semibold text-xl mb-3" style="color: #dc2626;">Input Error</h3>
+                        <p>Current reading cannot be less than previous reading.</p>
+                    `;
                     updateResultsDisplay(0, 0, 0, 0);
                     return;
                 }
                 if (isNaN(days) || days <= 0 || days > 365) {
-                    showMessageBox('warning', 'Input Error', 'Please enter a positive integer for days (1-365).');
+                    showModal('about-modal');
+                    document.getElementById('about-modal').querySelector('.custom-modal-content').innerHTML = `
+                        <h3 class="font-semibold text-xl mb-3" style="color: #dc2626;">Input Error</h3>
+                        <p>Please enter a positive integer for days (1-365).</p>
+                    `;
                     updateResultsDisplay(0, 0, 0, 0);
                     return;
                 }
@@ -659,7 +664,11 @@
                 const totalBill = calculateCostForCategory(consumption, selectedCategory);
 
                 if (isNaN(totalBill)) {
-                    showMessageBox('error', 'Calculation Error', 'Could not calculate bill for the selected category.');
+                    showModal('about-modal');
+                    document.getElementById('about-modal').querySelector('.custom-modal-content').innerHTML = `
+                        <h3 class="font-semibold text-xl mb-3" style="color: #dc2626;">Calculation Error</h3>
+                        <p>Could not calculate bill for the selected category.</p>
+                    `;
                     updateResultsDisplay(0, 0, 0, 0);
                     return;
                 }
@@ -677,18 +686,17 @@
 
             } catch (e) {
                 console.error("Error in calculateByMeterPushed:", e);
-                showMessageBox('error', 'Calculation Error', `An unexpected error occurred: ${e.message}`);
+                showModal('about-modal');
+                document.getElementById('about-modal').querySelector('.custom-modal-content').innerHTML = `
+                    <h3 class="font-semibold text-xl mb-3" style="color: #dc2626;">Calculation Error</h3>
+                    <p>An unexpected error occurred: ${e.message}</p>
+                `;
                 updateResultsDisplay(0, 0, 0, 0);
             }
         }
 
         // --- Initial Setup ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Display welcome message on initial load
-            showMessageBox('info', 'Important Information',
-                "This application was created from Python code by Dr. Ismael Abdulrahman." // Updated welcome message
-            );
-
             // Set initial values and trigger calculations
             onConsumptionTypeChanged(); // Set initial placeholder/value for consumption input
             calculateBillPushed(); // Perform an initial calculation based on defaults
@@ -706,9 +714,17 @@
             calculateBillBtn.addEventListener('click', calculateBillPushed);
             calculateMeterBtn.addEventListener('click', calculateByMeterPushed);
 
-            // Attach event listeners for the message box buttons
-            welcomeMessageOkBtn.addEventListener('click', () => hideMessageBox('welcome-message-box'));
-            messageBoxOverlay.addEventListener('click', () => hideMessageBox());
+            // Event listeners for the new About modal
+            aboutButton.addEventListener('click', () => {
+                // Reset modal content to default "About" message before showing
+                document.getElementById('about-modal').querySelector('.custom-modal-content').innerHTML = `
+                    <h3 class="font-semibold text-xl mb-3">About This Application</h3>
+                    <p>This application was created from Python code by Dr. Ismael Abdulrahman, 2025.</p>
+                `;
+                showModal('about-modal');
+            });
+            aboutModalCloseBtn.addEventListener('click', () => hideModal('about-modal'));
+            aboutModalOverlay.addEventListener('click', () => hideModal('about-modal'));
         });
     </script>
 </body>
