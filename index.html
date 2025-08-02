@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-lang-key="appTitle">Runaki Bill Assistant</title>
+    <title data-lang-key="appTitle">Iraqi Electricity Bill Calculator</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN for plotting -->
@@ -535,7 +535,7 @@
     </style>
 </head>
 <body>
-    <h1 class="text-3xl lg:text-4xl" data-lang-key="mainTitle">Runaki Bill Assistant</h1>
+    <h1 class="text-3xl lg:text-4xl" data-lang-key="mainTitle">Iraqi Electricity Bill Calculator</h1>
 
     <div class="main-container">
         <!-- Main content now in a single column -->
@@ -712,9 +712,9 @@
     <div id="appMessage" class="hidden"></div>
 
     <footer class="mt-8 text-center text-gray-500 text-sm">
-        <p>&copy; 2024 Runaki Bill Assistant. All rights reserved.</p>
+        <p>&copy; 2024 Iraqi Electricity Bill Calculator. All rights reserved.</p>
         <p data-lang-key="disclaimerText">Disclaimer: This tool is for estimation purposes only and should not be considered a final bill.</p>
-        <p data-lang-key="sourceText">Tariff rates based on Iraqi Electricity Tariffs, 2017.</p>
+        <p data-lang-key="sourceText">Tariff rates based on Iraqi Ministry of Electricity, 2017.</p>
     </footer>
 
     <script>
@@ -724,8 +724,8 @@
         // Translations object
         const translations = {
             'en': {
-                appTitle: 'Runaki Bill Assistant',
-                mainTitle: 'Runaki Bill Assistant',
+                appTitle: 'Iraqi Electricity Bill Calculator',
+                mainTitle: 'Iraqi Electricity Bill Calculator',
                 manualCalculationTitle: '1. Manual Calculation',
                 categoryLabel: 'Category:',
                 inputLabel: 'Input:',
@@ -757,7 +757,7 @@
                 tariffDetailsText: 'Below are the current tariff rates in IQD per kWh, based on the consumption category and tiered structure.',
                 reportTitle: 'Bill Calculation Report',
                 disclaimerText: 'Disclaimer: This tool is for estimation purposes only and should not be considered a final bill.',
-                sourceText: 'Tariff rates based on Iraqi Electricity Tariffs, 2017.',
+                sourceText: 'Tariff rates based on Iraqi Ministry of Electricity, 2017.',
                 householdOption: 'Household',
                 commercialOption: 'Commercial',
                 agricultureOption: 'Agriculture',
@@ -782,8 +782,8 @@
                 reportCost: 'Cost (IQD)'
             },
             'ar': {
-                appTitle: 'مساعد فواتير كهرباء',
-                mainTitle: 'مساعد فواتير كهرباء',
+                appTitle: 'حاسبة فواتير الكهرباء العراقية',
+                mainTitle: 'حاسبة فواتير الكهرباء العراقية',
                 manualCalculationTitle: '1. الحساب اليدوي',
                 categoryLabel: 'الفئة:',
                 inputLabel: 'الإدخال:',
@@ -815,7 +815,7 @@
                 tariffDetailsText: 'فيما يلي أسعار التعرفة الحالية بالدينار العراقي لكل كيلوواط ساعة، بناءً على فئة الاستهلاك والتعرفة المتدرجة.',
                 reportTitle: 'تقرير حساب الفاتورة',
                 disclaimerText: 'إخلاء مسؤولية: هذه الأداة لأغراض التقدير فقط ولا يجب اعتبارها فاتورة نهائية.',
-                sourceText: 'أسعار التعرفة مبنية على أسعار التعرفة العراقية للكهرباء، 2017.',
+                sourceText: 'أسعار التعرفة مبنية على بيانات وزارة الكهرباء العراقية، 2017.',
                 householdOption: 'منزلي',
                 commercialOption: 'تجاري',
                 agricultureOption: 'زراعي',
@@ -842,6 +842,42 @@
         };
         
         document.addEventListener('DOMContentLoaded', () => {
+             // --- UI ELEMENT SELECTION ---
+            const calculateManualButton = document.getElementById('calculateManualButton');
+            const calculateMeterButton = document.getElementById('calculateMeterButton');
+            const calculateDeviceButton = document.getElementById('calculateDeviceButton');
+            const showTariffDetailsButton = document.getElementById('showTariffDetailsButton');
+            const showReportButton = document.getElementById('showReportButton');
+            const addDeviceButton = document.getElementById('addDeviceButton');
+            const removeSelectedButton = document.getElementById('removeSelectedButton');
+            const manualInput = document.getElementById('manualInput');
+            const previousReading = document.getElementById('previousReading');
+            const currentReading = document.getElementById('currentReading');
+            const manualBill = document.getElementById('manualBill');
+            const manualKwh = document.getElementById('manualKwh');
+            const manualAvgRate = document.getElementById('manualAvgRate');
+            const manualCostPerAmpere = document.getElementById('manualCostPerAmpere');
+            const meterBill = document.getElementById('meterBill');
+            const meterKwh = document.getElementById('meterKwh');
+            const meterAvgRate = document.getElementById('meterAvgRate');
+            const deviceTotalBill = document.getElementById('deviceTotalBill');
+            const deviceTotalKwh = document.getElementById('deviceTotalKwh');
+            const deviceAvgRate = document.getElementById('deviceAvgRate');
+            const deviceTableBody = document.querySelector('#deviceTable tbody');
+            const manualInputTypeDropdown = document.getElementById('manualInputTypeDropdown');
+            const categoryDropdown = document.getElementById('categoryDropdown');
+            const deviceCategoryDropdown = document.getElementById('deviceCategoryDropdown');
+            const tariffDetailsModal = document.getElementById('tariffDetailsModal');
+            const closeTariffModal = document.getElementById('closeTariffModal');
+            const tariffDetailsContent = document.getElementById('tariffDetailsContent');
+            const householdTariffChartContainer = document.getElementById('householdTariffChartContainer');
+            const otherCategoriesTariffChartContainer = document.getElementById('otherCategoriesTariffChartContainer');
+            const reportModal = document.getElementById('reportModal');
+            const closeReportModal = document.getElementById('closeReportModal');
+            const reportContent = document.getElementById('reportContent');
+            const appMessage = document.getElementById('appMessage');
+
+
             // Check for and apply saved language preference, or default to 'en'
             const savedLanguage = localStorage.getItem('language') || 'en';
             applyLanguage(savedLanguage);
@@ -887,40 +923,6 @@
                 "State": 1000
             };
             
-            // --- UI ELEMENT SELECTION ---
-            const calculateManualButton = document.getElementById('calculateManualButton');
-            const calculateMeterButton = document.getElementById('calculateMeterButton');
-            const calculateDeviceButton = document.getElementById('calculateDeviceButton');
-            const showTariffDetailsButton = document.getElementById('showTariffDetailsButton');
-            const showReportButton = document.getElementById('showReportButton');
-            const addDeviceButton = document.getElementById('addDeviceButton');
-            const removeSelectedButton = document.getElementById('removeSelectedButton');
-            const manualInput = document.getElementById('manualInput');
-            const previousReading = document.getElementById('previousReading');
-            const currentReading = document.getElementById('currentReading');
-            const manualBill = document.getElementById('manualBill');
-            const manualKwh = document.getElementById('manualKwh');
-            const manualAvgRate = document.getElementById('manualAvgRate');
-            const manualCostPerAmpere = document.getElementById('manualCostPerAmpere');
-            const meterBill = document.getElementById('meterBill');
-            const meterKwh = document.getElementById('meterKwh');
-            const meterAvgRate = document.getElementById('meterAvgRate');
-            const deviceTotalBill = document.getElementById('deviceTotalBill');
-            const deviceTotalKwh = document.getElementById('deviceTotalKwh');
-            const deviceAvgRate = document.getElementById('deviceAvgRate');
-            const deviceTableBody = document.querySelector('#deviceTable tbody');
-            const manualInputTypeDropdown = document.getElementById('manualInputTypeDropdown');
-            const categoryDropdown = document.getElementById('categoryDropdown');
-            const deviceCategoryDropdown = document.getElementById('deviceCategoryDropdown');
-            const tariffDetailsModal = document.getElementById('tariffDetailsModal');
-            const closeTariffModal = document.getElementById('closeTariffModal');
-            const tariffDetailsContent = document.getElementById('tariffDetailsContent');
-            const householdTariffChartContainer = document.getElementById('householdTariffChartContainer');
-            const otherCategoriesTariffChartContainer = document.getElementById('otherCategoriesTariffChartContainer');
-            const reportModal = document.getElementById('reportModal');
-            const closeReportModal = document.getElementById('closeReportModal');
-            const reportContent = document.getElementById('reportContent');
-            const appMessage = document.getElementById('appMessage');
 
             // Store device data and Chart.js instances globally
             let devices = [];
