@@ -704,7 +704,9 @@
                     currReadingLabel: "Curr Reading:",
                     daysLabel: "Days:",
                     hideManualCalculation: "Hide Manual Calculation",
+                    showManualCalculation: "Show Manual Calculation",
                     showMeterCalculation: "Show By Meter Calculation",
+                    hideMeterCalculation: "Hide By Meter Calculation",
                     showDeviceTable: "Show Device Table",
                     hideDeviceTable: "Hide Device Table",
                     showBudgetOptimization: "Show Budget Optimization",
@@ -848,7 +850,9 @@
                     currReadingLabel: "القراءة الحالية:",
                     daysLabel: "الأيام:",
                     hideManualCalculation: "إخفاء الحساب اليدوي",
+                    showManualCalculation: "إظهار الحساب اليدوي",
                     showMeterCalculation: "إظهار الحساب بالعداد",
+                    hideMeterCalculation: "إخفاء الحساب بالعداد",
                     showDeviceTable: "إظهار جدول الأجهزة",
                     hideDeviceTable: "إخفاء جدول الأجهزة",
                     showBudgetOptimization: "إظهار تحسين الميزانية",
@@ -991,7 +995,9 @@
                     currReadingLabel: "خوێندنەوەی ئێستا:",
                     daysLabel: "ڕۆژەکان:",
                     hideManualCalculation: "شاردنەوەی ژماردنی دەستی",
+                    showManualCalculation: "پیشاندانی ژماردنی دەستی",
                     showMeterCalculation: "پیشاندانی ژماردن بە پێوەری کارەبا",
+                    hideMeterCalculation: "شاردنەوەی ژماردن بە پێوەر",
                     showDeviceTable: "پیشاندانی خشتەی ئامێرەکان",
                     hideDeviceTable: "شاردنەوەی خشتەی ئامێرەکان",
                     showBudgetOptimization: "پیشاندانی باشترکردنی بودجە",
@@ -1891,13 +1897,13 @@
 
                 let reportHtml = `
                     <div class="report-section-title">${translations[lang].overallConsumptionSummary}</div>
-                    <p><span class="report-item-label">${translations[lang].category}:</span> <span class="report-item-value">${translations[lang][category.toLowerCase() + 'Option'] || category}</span></p>
-                    <p><span class="report-item-label">${translations[lang].totalBill}:</span> <span class="report-item-value">${formatNumber(finalTotalBill, 0, true)} ${translations[lang].unitIQD}</span></p>
-                    <p><span class="report-item-label">${translations[lang].totalConsumption}:</span> <span class="report-item-value">${formatNumber(totalKwh, 2)} ${translations[lang].unitKWH}</span></p>
-                    <p><span class="report-item-label">${translations[lang].averageAmperes}:</span> <span class="report-item-value">${formatNumber(finalAvgAmperes, 2)} ${translations[lang].unitA}</span></p>
-                    <p><span class="report-item-label">${translations[lang].averageRate}:</span> <span class="report-item-value">${formatNumber(finalAvgRate, 2)} ${translations[lang].iqdPerKwh}</span></p>
+                    <p><span class="report-item-label">${translations[lang].category}:</span> <span class="report-item-value">${translations[lang][category.toLowerCase() + 'Option'] || category}</span></p>`;
+                    reportHtml += `<p><span class="report-item-label">${translations[lang].totalBill}:</span> <span class="report-item-value">${formatNumber(finalTotalBill, 0, true)} ${translations[lang].unitIQD}</span></p>`;
+                    reportHtml += `<p><span class="report-item-label">${translations[lang].totalConsumption}:</span> <span class="report-item-value">${formatNumber(totalKwh, 2)} ${translations[lang].unitKWH}</span></p>`;
+                    reportHtml += `<p><span class="report-item-label">${translations[lang].averageAmperes}:</span> <span class="report-item-value">${formatNumber(finalAvgAmperes, 2)} ${translations[lang].unitA}</span></p>`;
+                    reportHtml += `<p><span class="report-item-label">${translations[lang].averageRate}:</span> <span class="report-item-value">${formatNumber(finalAvgRate, 2)} ${translations[lang].iqdPerKwh}</span></p>`;
 
-                    <div class="report-section-title">${translations[lang].deviceBreakdown}</div>
+                    reportHtml += `<div class="report-section-title">${translations[lang].deviceBreakdown}</div>
                     <table class="report-table">
                         <thead>
                             <tr>
@@ -2162,16 +2168,18 @@
             toggleManualCalculationButton.addEventListener('click', () => {
                 manualCalculationSection.style.display = 'block';
                 meterCalculationSection.style.display = 'none';
-                toggleManualCalculationButton.textContent = translations[languageSelect.value].hideManualCalculation;
-                toggleMeterCalculationButton.textContent = translations[languageSelect.value].showMeterCalculation;
+                const lang = languageSelect.value;
+                toggleManualCalculationButton.textContent = translations[lang].hideManualCalculation;
+                toggleMeterCalculationButton.textContent = translations[lang].showMeterCalculation;
             });
 
             // Toggle Meter Calculation Section
             toggleMeterCalculationButton.addEventListener('click', () => {
                 meterCalculationSection.style.display = 'block';
                 manualCalculationSection.style.display = 'none';
-                toggleMeterCalculationButton.textContent = translations[languageSelect.value].hideMeterCalculation;
-                toggleManualCalculationButton.textContent = translations[languageSelect.value].showManualCalculation;
+                const lang = languageSelect.value;
+                toggleMeterCalculationButton.textContent = translations[lang].hideMeterCalculation;
+                toggleManualCalculationButton.textContent = translations[lang].showManualCalculation;
             });
 
 
