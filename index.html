@@ -70,38 +70,47 @@
         /* RTL specific styles */
         body.rtl {
             direction: rtl;
+        }
+        body.rtl h1,
+        body.rtl h2,
+        body.rtl .section-card,
+        body.rtl footer {
             text-align: right;
         }
-
-        body.rtl .input-group label {
-            /* Adjust label alignment for RTL if needed, depends on flex layout */
-            margin-right: 0;
-            margin-left: 1.25rem; /* Equivalent of gap from LTR */
+        body.rtl .text-left {
+            text-align: right;
         }
-
-        body.rtl .device-table th, 
-        body.rtl .device-table td {
-            text-align: center; /* Keep center for table cells */
+        body.rtl .items-start {
+            align-items: flex-end;
         }
-
         body.rtl .modal-close-button {
             right: unset;
             left: 1rem;
         }
         
         /* Language selector styling */
-        .language-selector {
-            margin-top: 1rem; /* Space from the content above */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
+        .lang-btn {
+            transition: background-color 0.2s, border-color 0.2s;
+            border: 2px solid transparent;
+            width: 3rem;
+            height: 3rem;
+            font-weight: bold;
         }
+        .lang-btn.active {
+            border-color: var(--primary-blue);
+            background-color: var(--input-dark-bg);
+            color: white;
+        }
+        .lang-btn:not(.active) {
+            background-color: var(--card-dark);
+            color: var(--text-medium-light);
+        }
+
 
         h1 {
             color: white; /* Changed to white as requested */
             font-weight: 800;
-            margin-bottom: 2.5rem; /* Increased margin */
+            margin-bottom: 1.5rem; /* Reduced margin */
             text-align: center;
             font-size: 2.75rem; /* Slightly larger font size */
             letter-spacing: -0.025em; /* Tighten letter spacing slightly */
@@ -111,7 +120,6 @@
             color: var(--text-light); /* Night mode heading color */
             font-weight: 700;
             margin-bottom: 1.25rem; /* Increased margin */
-            text-align: left;
             font-size: 1.6rem; /* Slightly larger for section titles */
         }
 
@@ -187,6 +195,10 @@
             color: var(--button-dark-text); /* Dark text for light grey button */
             margin: 0.5rem; /* Increased margin for spacing between buttons */
             background-color: var(--button-light-gray); /* Light grey background */
+        }
+
+        button.btn-action {
+            color: var(--highlight-yellow-dark);
         }
 
         button:hover {
@@ -398,12 +410,11 @@
         footer {
             color: var(--text-medium-light); /* Night mode footer text */
             margin-top: 8rem; /* Increased margin-top for footer */
-            text-align: center;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.25rem;
         }
 
         /* Message Box Styling */
@@ -489,6 +500,12 @@
 
     <h1 class="text-3xl lg:text-4xl" data-lang-key="mainTitle">Runaki Bill Assistant</h1>
 
+    <div id="languageSelectorTop" class="mb-6 flex justify-center gap-2">
+        <button id="lang-en" class="lang-btn">EN</button>
+        <button id="lang-ar" class="lang-btn">AR</button>
+        <button id="lang-ku" class="lang-btn">KU</button>
+    </div>
+
     <div class="main-container">
         <!-- Main content now in a single column -->
         <div class="flex flex-col w-full space-y-8">
@@ -513,7 +530,7 @@
                     </select>
                     <input type="number" id="manualInput" value="1891" class="w-28">
                 </div>
-                <button id="calculateManualButton" class="btn w-full" data-lang-key="calculateBillButton">Calculate Bill</button>
+                <button id="calculateManualButton" class="btn btn-action w-full" data-lang-key="calculateBillButton">Calculate Bill</button>
                 <div class="result-grid" id="manualResultGrid">
                     <div class="result-item">
                         <div class="result-label" data-lang-key="billLabel">Bill</div>
@@ -532,7 +549,7 @@
                         <div class="result-value" id="manualAvgRate">0.00 IQD/kWh</div>
                     </div>
                 </div>
-                <button id="manualReportButton" class="btn w-full mt-6" data-lang-key="generateReportButton">Generate Report</button>
+                <button id="manualReportButton" class="btn btn-action w-full mt-6" data-lang-key="generateReportButton">Generate Report</button>
             </div>
 
             <!-- 2. By Meter Calculation -->
@@ -546,7 +563,7 @@
                     <label for="daysInput" data-lang-key="daysLabel">Days:</label>
                     <input type="number" id="daysInput" value="30" min="1" max="365" class="w-16">
                 </div>
-                <button id="calculateMeterButton" class="btn w-full" data-lang-key="calculateBillButton">Calculate Bill</button>
+                <button id="calculateMeterButton" class="btn btn-action w-full" data-lang-key="calculateBillButton">Calculate Bill</button>
                 <div class="result-grid" id="meterResultGrid">
                     <div class="result-item">
                         <div class="result-label" data-lang-key="billLabel">Bill</div>
@@ -565,11 +582,11 @@
                         <div class="result-value" id="meterAvgRate">0.00 IQD/kWh</div>
                     </div>
                 </div>
-                <button id="meterReportButton" class="btn w-full mt-6" data-lang-key="generateReportButton">Generate Report</button>
+                <button id="meterReportButton" class="btn btn-action w-full mt-6" data-lang-key="generateReportButton">Generate Report</button>
             </div>
             
             <!-- New buttons for showing/hiding sections -->
-            <div class="flex flex-col items-start gap-2 mt-6 p-4 border border-gray-700 rounded-lg max-w-lg ml-0 mr-auto" style="background-color: var(--card-dark);">
+            <div class="flex flex-col items-start gap-2 mt-6 p-4 border border-gray-700 rounded-lg max-w-lg ml-0 mr-auto">
                 <button id="toggleManualCalculationButton" class="btn w-full text-left" data-lang-key="hideManualCalculation">Hide Manual Calculation</button>
                 <button id="toggleMeterCalculationButton" class="btn w-full text-left" data-lang-key="showMeterCalculation">Show By Meter Calculation</button>
                 <button id="toggleTableButton" class="btn w-full text-left" data-lang-key="showDeviceTable">Show Device Table</button>
@@ -607,7 +624,7 @@
                     <label for="loadFileInput" class="btn cursor-pointer w-full sm:w-auto text-left" data-lang-key="loadDataCSVButton">Load Data (CSV)<input type="file" id="loadFileInput" accept=".csv" class="hidden"></label>
                     <button id="clearAllButton" class="btn w-full sm:w-auto text-left" data-lang-key="clearAllButton">Clear All</button>
                 </div>
-                <button id="deviceReportButton" class="btn w-full mt-6" data-lang-key="generateReportButton">Generate Report</button>
+                <button id="deviceReportButton" class="btn btn-action w-full mt-6" data-lang-key="generateReportButton">Generate Report</button>
             </div>
 
             <!-- 3. Budget Optimization -->
@@ -621,7 +638,7 @@
                     </select>
                     <input type="number" id="budgetLimitInput" value="100000" class="w-32">
                 </div>
-                <button id="optimizeBudgetButton" class="btn w-full" data-lang-key="optimizeTargetButton">Optimize Target</button>
+                <button id="optimizeBudgetButton" class="btn btn-action w-full" data-lang-key="optimizeTargetButton">Optimize Target</button>
                 <div class="result-grid" id="budgetOptimizationResultGrid">
                     <div class="result-item col-span-full">
                         <div class="result-label" data-lang-key="optimizationResultLabel">Optimization Result</div>
@@ -635,13 +652,7 @@
 
     <footer class="mt-8 text-center text-neutral-gray-medium text-sm">
         <p data-lang-key="footerText">Created by Dr. Ismael Abdulrahman</p>
-        <div class="language-selector">
-            <select id="languageSelect" class="p-2 border rounded-md bg-gray-700 text-white">
-                <option value="en">English</option>
-                <option value="ar">العربية (Arabic)</option>
-                <option value="ku">کوردی سۆرانی (Kurdish Sorani)</option>
-            </select>
-        </div>
+        <p class="text-sm">ismael.abdulrahman@epu.edu.iq</p>
     </footer>
 
     <!-- Custom Modal for Tariff Details -->
@@ -1117,9 +1128,14 @@
                 }
             };
 
-            const languageSelect = document.getElementById('languageSelect');
+            const langEnBtn = document.getElementById('lang-en');
+            const langArBtn = document.getElementById('lang-ar');
+            const langKuBtn = document.getElementById('lang-ku');
+            const langBtns = [langEnBtn, langArBtn, langKuBtn];
+            let currentLang = 'en';
 
             const translatePage = (lang) => {
+                currentLang = lang;
                 const elements = document.querySelectorAll('[data-lang-key]');
                 const body = document.body;
 
@@ -1194,6 +1210,14 @@
 
                 const isBudgetOptimizationVisible = budgetOptimizationSection.style.display === 'block';
                 toggleBudgetOptimizationButton.textContent = isBudgetOptimizationVisible ? translations[lang].hideBudgetOptimization : translations[lang].showBudgetOptimization;
+            };
+
+            const setActiveLanguage = (lang) => {
+                langBtns.forEach(btn => btn.classList.remove('active'));
+                if (lang === 'en') langEnBtn.classList.add('active');
+                else if (lang === 'ar') langArBtn.classList.add('active');
+                else if (lang === 'ku') langKuBtn.classList.add('active');
+                translatePage(lang);
             };
 
             // --- GLOBAL CONSTANTS ---
@@ -1281,14 +1305,10 @@
 
             let selectedTableRow = null; 
 
-            // Set initial language to English after all UI elements are defined
-            translatePage('en');
-            languageSelect.value = 'en'; // Ensure dropdown reflects default
-
             // Event listener for language selection change
-            languageSelect.addEventListener('change', (e) => {
-                translatePage(e.target.value);
-            });
+            langEnBtn.addEventListener('click', () => setActiveLanguage('en'));
+            langArBtn.addEventListener('click', () => setActiveLanguage('ar'));
+            langKuBtn.addEventListener('click', () => setActiveLanguage('ku'));
 
 
             // --- UTILITY FUNCTIONS ---
@@ -1296,7 +1316,7 @@
                 try {
                     const num = parseFloat(value);
                     if (isNaN(num)) return String(value);
-                    const lang = languageSelect.value;
+                    const lang = currentLang;
                     // Use 'ar-IQ' for Arabic, 'en-US' for English and Kurdish (as Kurdish typically uses Western numerals for numbers)
                     const locale = lang === 'ar' ? 'ar-IQ' : 'en-US'; 
 
@@ -1364,7 +1384,7 @@
 
             // --- MESSAGE DISPLAY FUNCTION ---
             const showMessage = (messageKey, type = 'info', replacements = {}) => {
-                const lang = languageSelect.value;
+                const lang = currentLang;
                 let message = translations[lang] && translations[lang][messageKey] ? translations[lang][messageKey] : messageKey;
                 
                 // Apply replacements
@@ -1382,7 +1402,7 @@
 
             // --- TARIFF CALCULATION LOGIC (IRAQI SYSTEM) ---
             const getIraqiTariffDetails = (kWh, category) => {
-                const lang = languageSelect.value;
+                const lang = currentLang;
                 let totalCost = 0;
                 let breakdown = [];
                 let remainingKwh = kWh;
@@ -1468,7 +1488,7 @@
                     void elem.offsetWidth; // Trigger reflow to restart animation
                     elem.classList.add('flash-animation'); // Add animation
                 });
-                const lang = languageSelect.value;
+                const lang = currentLang;
                 billElem.textContent = `${formatNumber(bill, 0, true)} ${translations[lang].unitIQD}`; // Bill first
                 kwhElem.textContent = `${formatNumber(kwh, 2)} ${translations[lang].unitKWH}`;
                 amperesElem.textContent = `${formatNumber(amperes, 2)} ${translations[lang].unitA}`;
@@ -1563,7 +1583,7 @@
                 const deviceDetails = [];
                 const category = categoryDropdown.value;
                 const daysVal = validateNumeric(daysInput.value) || 30;
-                const lang = languageSelect.value;
+                const lang = currentLang;
 
                 Array.from(deviceTableBody.children).forEach(row => {
                     const isOn = row.querySelector('.device-on').checked;
@@ -1606,7 +1626,7 @@
                 let targetValue = validateNumeric(budgetLimitInput.value);
                 if (isNaN(targetValue) || targetValue < 0) {
                     showMessage("enterValidNumeric", 'error');
-                    budgetResultLabel.textContent = translations[languageSelect.value].invalidTarget;
+                    budgetResultLabel.textContent = translations[currentLang].invalidTarget;
                     updateResultDisplay(0, 0, 0, 0, manualKwhElem, manualAmperesElem, manualBillElem, manualAvgRateElem, budgetOptimizationResultGrid, 'optimization'); // Use dummy values for color update
                     return;
                 }
@@ -1644,7 +1664,7 @@
 
                 const currentBill = calculateCostForCategory(currentTotalKwh, category);
                 const currentAmperes = kwhToAmperes(currentTotalKwh, daysVal);
-                const lang = languageSelect.value;
+                const lang = currentLang;
 
                 let targetKwhForOptimization = 0;
                 if (optimizationTargetDropdown.value === 'Target Cost') {
@@ -1724,7 +1744,7 @@
 
             // --- DEVICE TABLE LOGIC ---
             const addTableRow = (deviceData = {}) => {
-                const lang = languageSelect.value;
+                const lang = currentLang;
                 const defaultNameKey = deviceData.nameKey || 'newDevice';
                 const data = {
                     nameKey: defaultNameKey,
@@ -1805,7 +1825,7 @@
 
             // --- REPORT GENERATION FUNCTIONS ---
             const generateReport = (calculationType) => {
-                const lang = languageSelect.value;
+                const lang = currentLang;
                 let reportHtml = '';
                 let kwh, bill, amperes, avgRate, category, breakdown;
 
@@ -1853,7 +1873,7 @@
             };
 
             const generateDeviceReport = () => {
-                const lang = languageSelect.value;
+                const lang = currentLang;
                 let totalKwh = 0;
                 const deviceDetailsForReport = [];
                 const category = categoryDropdown.value;
@@ -2137,7 +2157,7 @@
                 if (target === 'Target Cost') budgetLimitInput.value = '100000';
                 else if (target === 'Target Amperes') budgetLimitInput.value = '12';
                 else if (target === 'Target kWh') budgetLimitInput.value = '1891';
-                budgetResultLabel.textContent = translations[languageSelect.value].notOptimized;
+                budgetResultLabel.textContent = translations[currentLang].notOptimized;
             });
             optimizeBudgetButton.addEventListener('click', optimizeForBudget);
             budgetLimitInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') optimizeForBudget(); });
@@ -2147,7 +2167,7 @@
             toggleBudgetOptimizationButton.addEventListener('click', () => {
                 const isVisible = budgetOptimizationSection.style.display === 'block';
                 budgetOptimizationSection.style.display = isVisible ? 'none' : 'block';
-                toggleBudgetOptimizationButton.textContent = isVisible ? translations[languageSelect.value].showBudgetOptimization : translations[languageSelect.value].hideBudgetOptimization;
+                toggleBudgetOptimizationButton.textContent = isVisible ? translations[currentLang].showBudgetOptimization : translations[currentLang].hideBudgetOptimization;
                 if (!isVisible) {
                     // If showing, ensure initial calculation is run
                     optimizeForBudget();
@@ -2158,34 +2178,44 @@
             toggleTableButton.addEventListener('click', () => {
                 const isVisible = deviceTableSection.style.display === 'block';
                 deviceTableSection.style.display = isVisible ? 'none' : 'block';
-                toggleTableButton.textContent = isVisible ? translations[languageSelect.value].showDeviceTable : translations[languageSelect.value].hideDeviceTable;
+                toggleTableButton.textContent = isVisible ? translations[currentLang].showDeviceTable : translations[currentLang].hideDeviceTable;
                 if (!isVisible) {
                     calculateDeviceConsumption(); 
                 }
             });
 
+            // --- REFACTORED BUTTON TOGGLE LOGIC ---
+            const updateCalculationToggleButtons = () => {
+                const lang = currentLang;
+                const isManualVisible = manualCalculationSection.style.display !== 'none';
+
+                if (isManualVisible) {
+                    toggleManualCalculationButton.textContent = translations[lang].hideManualCalculation;
+                    toggleMeterCalculationButton.textContent = translations[lang].showMeterCalculation;
+                } else {
+                    toggleManualCalculationButton.textContent = translations[lang].showManualCalculation;
+                    toggleMeterCalculationButton.textContent = translations[lang].hideMeterCalculation;
+                }
+            };
+
             // Toggle Manual Calculation Section
             toggleManualCalculationButton.addEventListener('click', () => {
                 manualCalculationSection.style.display = 'block';
                 meterCalculationSection.style.display = 'none';
-                const lang = languageSelect.value;
-                toggleManualCalculationButton.textContent = translations[lang].hideManualCalculation;
-                toggleMeterCalculationButton.textContent = translations[lang].showMeterCalculation;
+                updateCalculationToggleButtons();
             });
 
             // Toggle Meter Calculation Section
             toggleMeterCalculationButton.addEventListener('click', () => {
                 meterCalculationSection.style.display = 'block';
                 manualCalculationSection.style.display = 'none';
-                const lang = languageSelect.value;
-                toggleMeterCalculationButton.textContent = translations[lang].hideMeterCalculation;
-                toggleManualCalculationButton.textContent = translations[lang].showManualCalculation;
+                updateCalculationToggleButtons();
             });
 
 
             // Show Tariff Details Button
             showTariffDetailsButton.addEventListener('click', () => {
-                const lang = languageSelect.value;
+                const lang = currentLang;
                 tariffDetailsModalTitle.textContent = translations[lang].tariffDetailsModalTitle;
 
                 // Destroy existing charts
@@ -2278,6 +2308,8 @@
             calculateDeviceConsumption(); // Calculate initial device consumption
             performManualCalculation(); // Perform initial manual calculation
             performMeterCalculation(); // Perform initial meter calculation
+            setActiveLanguage('en'); // Set initial language and button state
+            updateCalculationToggleButtons(); // Set initial button text
         });
     </script>
 </body>
